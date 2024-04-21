@@ -1,7 +1,11 @@
 import { InputText } from "@/components/InputText";
 import Styles from "./createItem.module.scss";
 
-export default function CreateItem() {
+interface CreateItemProps {
+  onRequestClose: () => void;
+}
+
+export default function CreateItem({ onRequestClose }: CreateItemProps) {
   return (
     <div className={Styles.container}>
       <section className={Styles.boxModal}>
@@ -24,7 +28,7 @@ export default function CreateItem() {
         </div>
         <div className={Styles.foot}>
           <button>Confirmar</button>
-          <button>Cancelar</button>
+          <button onClick={() => onRequestClose()}>Cancelar</button>
         </div>
       </section>
     </div>
