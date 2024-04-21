@@ -1,0 +1,55 @@
+.container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 20;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.boxModal {
+  width: 550px;
+  background-color: var(--gray-bg);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 20px;
+  gap: 30px;
+  > p {
+    color: var(--white);
+    font-size: 17px;
+  }
+}
+.divider{
+    display: flex;
+    gap: 10px;
+}
+.foot{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+    >button{
+        height: 40px;
+        border-radius: 75px;
+        padding: 0px 20px;
+        border: none;
+        background-color: var(--primary);
+        cursor: pointer;
+        &:hover{
+            background-color: var(--hover);
+        }
+        &:last-child{
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary)
+        }
+        
+    }
+}

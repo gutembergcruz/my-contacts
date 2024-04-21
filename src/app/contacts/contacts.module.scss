@@ -5,6 +5,31 @@
     width: 100%;
     >aside{
         max-width: 300px;
+        >.head{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            >h1{
+                color: var(--primary);
+            }
+            >button{
+                background-color: var(--primary);
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--black-bg);
+                font-size: 20px;
+                cursor: pointer;
+                &:hover{
+                    background-color: var(--hover);
+                }
+            }
+        }
     }
     >main{
         width: 100%;

@@ -40,8 +40,13 @@
         border: none;
         background-color: var(--primary);
         cursor: pointer;
-        :hover{
+        &:hover{
             background-color: var(--hover);
+        }
+        &:last-child{
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary)
         }
         
     }
