@@ -2,13 +2,19 @@
 import { useState } from "react";
 import Styles from "./contactItem.module.scss";
 import { IoEllipsisHorizontalSharp } from "react-icons/io5";
+import api from "@/services/api";
 
 interface ContactItemProps {
     name: string;
     cpf: string;
+    id: number;
+    onDelete: (id: number) => void;
 }
-export default function ContactItem({ name, cpf }: ContactItemProps) {
+export default function ContactItem({ name, cpf, id, onDelete }: ContactItemProps) {
   const [collapsed, setCollapsed] = useState(false);
+
+  
+
   return (
     <article className={Styles.container}>
       <div className={Styles.info}>
@@ -22,8 +28,7 @@ export default function ContactItem({ name, cpf }: ContactItemProps) {
         {collapsed && (
           <div>
             <button>Ver endereço</button>
-            <button>Editar</button>
-            <button>Excluir</button>
+            <button onClick={() => onDelete(id)}>Excluir</button>
           </div>
         )}
       </div>

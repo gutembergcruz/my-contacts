@@ -1,14 +1,33 @@
 "use client";
 import ContactsList from "@/components/ContactsList";
-
 import Styles from "./contacts.module.scss";
 import { FiMenu, FiPlus } from "react-icons/fi";
 import CreateItem from "@/components/ContactsList/CreateItem";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+function logout() {
+  localStorage.removeItem("loggedInUser");
+
+  window.location.href = "/login";
+}
+
+function deleteAccount() {
+  const username = localStorage.getItem("loggedInUser");
+  if (username !== null) {
+    localStorage.removeItem(username);
+    localStorage.removeItem("loggedInUser");
+
+    window.location.href = "/login";
+  }
+}
 
 export default function Contacts() {
   const [isCreate, setIsCreate] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const loggedInUser = localStorage.getItem('loggedInUser');
+
+
   return (
     <section className={Styles.container}>
       {isCreate && <CreateItem onRequestClose={() => setIsCreate(false)} />}
@@ -23,15 +42,14 @@ export default function Contacts() {
       </aside>
       <main>
         <div className={Styles.profile}>
-          Olá, <strong>Gustavo</strong>
           <div className={Styles.collapse}>
             <button onClick={() => setIsCollapsed(!isCollapsed)}>
               <FiMenu />
             </button>
             {isCollapsed && (
               <div>
-                <button>Sair</button>
-                <button>Excluir Conta</button>
+                <button onClick={logout}>Sair</button>
+                <button onClick={deleteAccount}>Excluir Conta</button>
               </div>
             )}
           </div>
