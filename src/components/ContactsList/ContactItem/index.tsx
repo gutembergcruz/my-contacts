@@ -9,11 +9,10 @@ interface ContactItemProps {
     cpf: string;
     id: number;
     onDelete: (id: number) => void;
+    onViewMap: () => void;
 }
-export default function ContactItem({ name, cpf, id, onDelete }: ContactItemProps) {
+export default function ContactItem({ name, cpf, id, onDelete, onViewMap }: ContactItemProps) {
   const [collapsed, setCollapsed] = useState(false);
-
-  
 
   return (
     <article className={Styles.container}>
@@ -21,13 +20,13 @@ export default function ContactItem({ name, cpf, id, onDelete }: ContactItemProp
         <p>{name}</p>
         <p>CPF: {cpf}</p>
       </div>
-      <div className={Styles.actions}>
+      <div className={Styles.actions} onMouseLeave={() => setCollapsed(false)}>
         <button onClick={() => setCollapsed(!collapsed)}>
           <IoEllipsisHorizontalSharp />
         </button>
         {collapsed && (
           <div>
-            <button>Ver endereço</button>
+            <button onClick={() => onViewMap()}>Ver endereço</button>
             <button onClick={() => onDelete(id)}>Excluir</button>
           </div>
         )}

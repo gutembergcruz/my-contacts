@@ -5,9 +5,14 @@ import Styles from "./contactList.module.scss";
 import api from "@/services/api";
 
 interface ContactItemProps {
+  changeMap(e: string): void;
+}
+
+interface ContactItemsProps {
   nome: string;
   cpf: string;
   id: number;
+  mapurl: string;
 }
 
 function handleDelete(id: number) {
@@ -16,8 +21,8 @@ function handleDelete(id: number) {
     window.location.reload();
   })
 }
-export default function ContactsList() {
-  const [contacts, setContacts] = useState<ContactItemProps[]>([]);
+export default function ContactsList({changeMap}: ContactItemProps) {
+  const [contacts, setContacts] = useState<ContactItemsProps[]>([]);
   useEffect(() => {
     api.get('/contacts').then((response) => {
       setContacts(response.data)
@@ -37,6 +42,7 @@ export default function ContactsList() {
             name={contact.nome}
             cpf={contact.cpf}
             id={contact.id}
+            onViewMap={() => changeMap(contact.mapurl)}
           />
         ))}
       </div>

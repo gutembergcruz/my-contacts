@@ -1,7 +1,7 @@
-import React, { useState, useReducer } from 'react';
-import { InputText } from '@/components/InputText';
-import Styles from './createItem.module.scss';
-import api from '@/services/api';
+import React, { useState, useReducer } from "react";
+import { InputText } from "@/components/InputText";
+import Styles from "./createItem.module.scss";
+import api from "@/services/api";
 
 interface CreateItemProps {
   onRequestClose: () => void;
@@ -17,25 +17,27 @@ interface State {
   cidade: string;
   complemento: string;
   owner: string;
+  mapurl: string;
 }
 
 type Action = { type: string; payload: { field: string; value: string } };
 
 const initialState: State = {
-  nome: '',
-  cpf: '',
-  cep: '',
-  rua: '',
-  numero: '',
-  bairro: '',
-  cidade: '',
-  complemento: '',
-  owner: localStorage.getItem('loggedInUser') || '',
+  nome: "",
+  cpf: "",
+  cep: "",
+  rua: "",
+  numero: "",
+  bairro: "",
+  cidade: "",
+  complemento: "",
+  owner: localStorage.getItem("loggedInUser") || "",
+  mapurl: "",
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'UPDATE_FIELD':
+    case "UPDATE_FIELD":
       return { ...state, [action.payload.field]: action.payload.value };
     default:
       return state;
@@ -44,16 +46,14 @@ function reducer(state: State, action: Action): State {
 
 export default function CreateItem({ onRequestClose }: CreateItemProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [loading, setLoading] = useState(false);
 
   function handleChange(field: string, value: string) {
-    dispatch({ type: 'UPDATE_FIELD', payload: { field, value } });
+    dispatch({ type: "UPDATE_FIELD", payload: { field, value } });
   }
 
   async function handleCEPChange(value: string) {
     dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cep', value } });
     if (value.length === 8) {
-      setLoading(true);
       try {
         const response = await api.get(`https://viacep.com.br/ws/${value}/json/`);
         const data = response.data;
@@ -61,24 +61,29 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
         dispatch({ type: 'UPDATE_FIELD', payload: { field: 'bairro', value: data.bairro || '' } });
         dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cidade', value: data.localidade || '' } });
         dispatch({ type: 'UPDATE_FIELD', payload: { field: 'complemento', value: data.complemento || '' } });
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'owner', value: localStorage.getItem('loggedInUser') || '' } });
+  
+        // Use a API Geocoding do Google Maps para obter as coordenadas
+        const geocodingResponse = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(data.logradouro)},${encodeURIComponent(data.bairro)},${encodeURIComponent(data.localidade)},${encodeURIComponent(data.uf)}&key=AIzaSyAvUdBIf3CLY0HfiQJx5fJu0gOMz3BYZow`);
+        const geocodingData = geocodingResponse.data;
+        const location = geocodingData.results[0].geometry.location;
+        const latitude = location.lat;
+        const longitude = location.lng;
+  
+        // Gerar o iframe do Google Maps com as coordenadas
+        const iframeUrl = `https://www.google.com/maps/embed/v1/view?key=AIzaSyAvUdBIf3CLY0HfiQJx5fJu0gOMz3BYZow&center=${latitude},${longitude}&zoom=15&maptype=roadmap`;
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'mapurl', value: iframeUrl } });
+  
       } catch (error) {
         console.error('Erro ao buscar CEP:', error);
-      } finally {
-        setLoading(false);
       }
     }
   }
 
-  6
-
   function handleSubmit() {
-    api
-      .post('/contacts', state)
-      .then(() => {
-        alert('Contato criado com sucesso!')
-        window.location.reload();
-      })
+    api.post("/contacts", state).then(() => {
+      alert("Contato criado com sucesso!");
+      window.location.reload();
+    });
   }
 
   return (
@@ -89,12 +94,12 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
           <InputText
             label="Nome"
             value={state.nome}
-            onChange={(e) => handleChange('nome', e)}
+            onChange={(e) => handleChange("nome", e)}
           />
           <InputText
             label="CPF"
             value={state.cpf}
-            onChange={(e) => handleChange('cpf', e)}
+            onChange={(e) => handleChange("cpf", e)}
           />
         </div>
         <div className={Styles.divider}>
@@ -106,31 +111,31 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
           <InputText
             label="Rua"
             value={state.rua}
-            onChange={(e) => handleChange('rua', e)}
+            onChange={(e) => handleChange("rua", e)}
           />
         </div>
         <div className={Styles.divider}>
           <InputText
             label="Número"
             value={state.numero}
-            onChange={(e) => handleChange('numero', e)}
+            onChange={(e) => handleChange("numero", e)}
           />
           <InputText
             label="Bairro"
             value={state.bairro}
-            onChange={(e) => handleChange('bairro', e)}
+            onChange={(e) => handleChange("bairro", e)}
           />
         </div>
         <div className={Styles.divider}>
           <InputText
             label="Cidade"
             value={state.cidade}
-            onChange={(e) => handleChange('cidade', e)}
+            onChange={(e) => handleChange("cidade", e)}
           />
           <InputText
             label="Complemento"
             value={state.complemento}
-            onChange={(e) => handleChange('complemento', e)}
+            onChange={(e) => handleChange("complemento", e)}
           />
         </div>
         <div className={Styles.foot}>
