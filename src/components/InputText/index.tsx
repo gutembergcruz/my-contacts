@@ -1,7 +1,7 @@
 'use client'
 import { FiXCircle } from 'react-icons/fi';
 import Styles from './InputText.module.scss'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface InputProps {
     name?: string;
@@ -21,6 +21,10 @@ export function InputText({ name, label, value, onChange, type }: InputProps) {
         }
     };
 
+    useEffect(() => {
+        setInputValue(value || '');
+    }, [value]);
+
     const handleClear = () => {
         setInputValue('');
         if (onChange) {
@@ -32,7 +36,7 @@ export function InputText({ name, label, value, onChange, type }: InputProps) {
         <div className={Styles.container}>
             <input name={name} required type={type === 'password' ? 'password' : 'text'} value={inputValue} onChange={handleChange}  />
             <label htmlFor="">{label}</label>
-            <button onClick={handleClear}> <FiXCircle size={20} /> </button>
+            <button onClick={() => handleClear()}> <FiXCircle size={20} /> </button>
         </div>
     );
 }

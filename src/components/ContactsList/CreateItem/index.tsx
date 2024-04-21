@@ -1,4 +1,4 @@
-import { useState, useReducer } from 'react';
+import React, { useState, useReducer } from 'react';
 import { InputText } from '@/components/InputText';
 import Styles from './createItem.module.scss';
 import api from '@/services/api';
@@ -44,10 +44,33 @@ function reducer(state: State, action: Action): State {
 
 export default function CreateItem({ onRequestClose }: CreateItemProps) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [loading, setLoading] = useState(false);
 
   function handleChange(field: string, value: string) {
     dispatch({ type: 'UPDATE_FIELD', payload: { field, value } });
   }
+
+  async function handleCEPChange(value: string) {
+    dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cep', value } });
+    if (value.length === 8) {
+      setLoading(true);
+      try {
+        const response = await api.get(`https://viacep.com.br/ws/${value}/json/`);
+        const data = response.data;
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'rua', value: data.logradouro || '' } });
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'bairro', value: data.bairro || '' } });
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cidade', value: data.localidade || '' } });
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'complemento', value: data.complemento || '' } });
+        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'owner', value: localStorage.getItem('loggedInUser') || '' } });
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  }
+
+  6
 
   function handleSubmit() {
     api
@@ -78,7 +101,7 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
           <InputText
             label="CEP"
             value={state.cep}
-            onChange={(e) => handleChange('cep', e)}
+            onChange={(e) => handleCEPChange(e)}
           />
           <InputText
             label="Rua"
