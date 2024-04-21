@@ -1,0 +1,12 @@
+.container{
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    >aside{
+        max-width: 300px;
+    }
+    >main{
+        width: 100%;
+    }
+}

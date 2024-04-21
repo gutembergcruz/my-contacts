@@ -1,0 +1,9 @@
+.container{
+    display: flex;
+    min-height: 100vh;
+    max-height: 100vh;
+    width: 300px;
+    border-right: 1px solid var(--gray-border);
+    overflow-y: scroll;
+    flex-direction: column;
+}

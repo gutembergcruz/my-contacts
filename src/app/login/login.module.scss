@@ -13,8 +13,7 @@
     }
 }
 .boxLogin{
-    width: 350px;    
-    height: 300px;
+    width: 350px;
     background-color: var(--gray-bg);
     border-radius: 10px;
     display: flex;
@@ -22,4 +21,28 @@
     justify-content: space-around;
     flex-direction: column;
     padding: 20px;
+    gap: 30px;
+    >p{
+        color: var(--white);
+        font-size: 17px;
+    }
+}
+
+.foot{
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    gap: 10px;
+    >button{
+        height: 40px;
+        border-radius: 75px;
+        padding: 0px 20px;
+        border: none;
+        background-color: var(--primary);
+        cursor: pointer;
+        :hover{
+            background-color: var(--hover);
+        }
+        
+    }
 }
