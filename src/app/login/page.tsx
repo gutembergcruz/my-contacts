@@ -3,27 +3,24 @@ import { InputText } from "@/components/InputText";
 import Styles from "./login.module.scss";
 import { useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
+
 
 function register(username: string, password: string) {
-  if (typeof window !== "undefined") {
-    if (localStorage.getItem(username) !== null) {
-      return false;
-    }
-
-    localStorage.setItem(username, password);
-    return true;
+  if (localStorage.getItem(username) !== null) {
+    return false;
   }
+
+  localStorage.setItem(username, password);
+  return true;
 }
 
 function login(username: string, password: string | null) {
-  if (typeof window !== "undefined") {
-    if (localStorage.getItem(username) === password) {
-      localStorage.setItem("loggedInUser", username);
-      return true;
-    }
-    return false;
+  if (localStorage.getItem(username) === password) {
+    localStorage.setItem("loggedInUser", username);
+    return true;
   }
+  return false;
 }
 
 function reducer(state: any, action: { type: any; field: any; value: any }) {
@@ -47,10 +44,10 @@ export default function Login() {
 
   function handleLogin() {
     if (login(email, password)) {
-      toast.success("Login efetuado com sucesso!");
+      toast.success('Login efetuado com sucesso!');
       router.push("/contacts");
     } else {
-      toast.error("Usário não encontrado");
+      toast.error('Usário não encontrado');
     }
   }
 

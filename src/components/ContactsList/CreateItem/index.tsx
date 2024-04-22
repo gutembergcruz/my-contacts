@@ -79,19 +79,18 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
 
         const geocodingResponse = await api.get(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            data.logradouro
-          )},${encodeURIComponent(data.bairro)},${encodeURIComponent(
-            data.localidade
-          )},${encodeURIComponent(data.uf)}&key=${
-            process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-          }`
+            `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`
+          )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
         );
         const geocodingData = geocodingResponse.data;
         const location = geocodingData.results[0].geometry.location;
         const latitude = location.lat;
         const longitude = location.lng;
 
-        const iframeUrl = `https://www.google.com/maps/embed/v1/view?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&center=${latitude},${longitude}&zoom=15&maptype=roadmap`;
+        const iframeUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d0.3599.984896802188!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dcfbb566eef661%3A0x1c27fb2b25e207ab!2s${encodeURIComponent(
+          `${data.logradouro}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.uf}, ${value}`
+        )}!5e0!3m2!1spt-BR!2sbr&zoom=15`;
+
         dispatch({
           type: "UPDATE_FIELD",
           payload: { field: "mapurl", value: iframeUrl },

@@ -7,29 +7,25 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 function logout() {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("loggedInUser");
-    toast.success("Logout efetuado com sucesso!");
-    window.location.href = "/login";
-  }
+  localStorage.removeItem("loggedInUser");
+  toast.success('Logout efetuado com sucesso!');
+  window.location.href = "/login";
 }
 
 function deleteAccount() {
-  if (typeof window !== "undefined") {
-    const username = localStorage.getItem("loggedInUser");
-    if (username !== null) {
-      localStorage.removeItem(username);
-      localStorage.removeItem("loggedInUser");
-      toast.success("Conta excluída com sucesso!");
-      window.location.href = "/login";
-    }
+  const username = localStorage.getItem("loggedInUser");
+  if (username !== null) {
+    localStorage.removeItem(username);
+    localStorage.removeItem("loggedInUser");
+    toast.success('Conta excluída com sucesso!');
+    window.location.href = "/login";
   }
 }
 
 export default function Contacts() {
   const [isCreate, setIsCreate] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [map, setMap] = useState("");
+  const [map, setMap] = useState('');
 
   return (
     <section className={Styles.container}>
@@ -57,7 +53,10 @@ export default function Contacts() {
             )}
           </div>
         </div>
-        <iframe className={Styles.iframeMap} src={map}></iframe>
+        <iframe
+          className={Styles.iframeMap}
+          src={map}
+        ></iframe>
       </main>
     </section>
   );

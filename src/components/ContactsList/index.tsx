@@ -16,16 +16,15 @@ interface ContactItemsProps {
   mapurl: string;
 }
 
+
 export default function ContactsList({ changeMap }: ContactItemProps) {
   const [contacts, setContacts] = useState<ContactItemsProps[]>([]);
 
   function handlegetItems() {
-    if (typeof window !== "undefined") {
-      const owner = localStorage.getItem("loggedInUser") || "";
-      api.get(`/contacts?owner=${owner}`).then((response) => {
-        setContacts(response.data);
-      });
-    }
+    const owner = localStorage.getItem("loggedInUser") || "";
+    api.get(`/contacts?owner=${owner}`).then((response) => {
+      setContacts(response.data);
+    });
   }
 
   function handleDelete(id: number) {
@@ -40,20 +39,18 @@ export default function ContactsList({ changeMap }: ContactItemProps) {
   }, []);
 
   function handleSearch(search: string) {
-    if (typeof window !== "undefined") {
-      const owner = localStorage.getItem("loggedInUser") || "";
-      let queryParam = "";
+    const owner = localStorage.getItem("loggedInUser") || "";
+    let queryParam = "";
 
-      if (!isNaN(Number(search.charAt(0)))) {
-        queryParam = `&cpf=${search}`;
-      } else {
-        queryParam = `&nome=${search}`;
-      }
-
-      api.get(`/contacts?owner=${owner}${queryParam}`).then((response) => {
-        setContacts(response.data);
-      });
+    if (!isNaN(Number(search.charAt(0)))) {
+      queryParam = `&cpf=${search}`;
+    } else {
+      queryParam = `&nome=${search}`;
     }
+
+    api.get(`/contacts?owner=${owner}${queryParam}`).then((response) => {
+      setContacts(response.data);
+    });
   }
 
   return (
