@@ -3,6 +3,7 @@ import { InputText } from "../InputText";
 import ContactItem from "./ContactItem";
 import Styles from "./contactList.module.scss";
 import api from "@/services/api";
+import { toast } from "react-toastify";
 
 interface ContactItemProps {
   changeMap(e: string): void;
@@ -15,20 +16,26 @@ interface ContactItemsProps {
   mapurl: string;
 }
 
-function handleDelete(id: number) {
-  api.delete(`/contacts/${id}`).then((response) => {
-    alert("Contato excluido com sucesso!");
-    window.location.reload();
-  });
-}
+
 export default function ContactsList({ changeMap }: ContactItemProps) {
   const [contacts, setContacts] = useState<ContactItemsProps[]>([]);
 
-  useEffect(() => {
+  function handlegetItems() {
     const owner = localStorage.getItem("loggedInUser") || "";
     api.get(`/contacts?owner=${owner}`).then((response) => {
       setContacts(response.data);
     });
+  }
+
+  function handleDelete(id: number) {
+    api.delete(`/contacts/${id}`).then((response) => {
+      toast.success("Contato excluído com sucesso!");
+      handlegetItems();
+    });
+  }
+
+  useEffect(() => {
+    handlegetItems();
   }, []);
 
   function handleSearch(search: string) {

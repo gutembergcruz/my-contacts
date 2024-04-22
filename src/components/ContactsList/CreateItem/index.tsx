@@ -2,6 +2,7 @@ import React, { useState, useReducer } from "react";
 import { InputText } from "@/components/InputText";
 import Styles from "./createItem.module.scss";
 import api from "@/services/api";
+import { toast } from "react-toastify";
 
 interface CreateItemProps {
   onRequestClose: () => void;
@@ -52,36 +53,58 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
   }
 
   async function handleCEPChange(value: string) {
-    dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cep', value } });
+    dispatch({ type: "UPDATE_FIELD", payload: { field: "cep", value } });
     if (value.length === 8) {
       try {
-        const response = await api.get(`https://viacep.com.br/ws/${value}/json/`);
+        const response = await api.get(
+          `https://viacep.com.br/ws/${value}/json/`
+        );
         const data = response.data;
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'rua', value: data.logradouro || '' } });
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'bairro', value: data.bairro || '' } });
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'cidade', value: data.localidade || '' } });
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'complemento', value: data.complemento || '' } });
-  
-        // Use a API Geocoding do Google Maps para obter as coordenadas
-        const geocodingResponse = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(data.logradouro)},${encodeURIComponent(data.bairro)},${encodeURIComponent(data.localidade)},${encodeURIComponent(data.uf)}&key=AIzaSyAvUdBIf3CLY0HfiQJx5fJu0gOMz3BYZow`);
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "rua", value: data.logradouro || "" },
+        });
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "bairro", value: data.bairro || "" },
+        });
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "cidade", value: data.localidade || "" },
+        });
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "complemento", value: data.complemento || "" },
+        });
+
+        const geocodingResponse = await api.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+            data.logradouro
+          )},${encodeURIComponent(data.bairro)},${encodeURIComponent(
+            data.localidade
+          )},${encodeURIComponent(data.uf)}&key=${
+            process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+          }`
+        );
         const geocodingData = geocodingResponse.data;
         const location = geocodingData.results[0].geometry.location;
         const latitude = location.lat;
         const longitude = location.lng;
-  
-        // Gerar o iframe do Google Maps com as coordenadas
-        const iframeUrl = `https://www.google.com/maps/embed/v1/view?key=AIzaSyAvUdBIf3CLY0HfiQJx5fJu0gOMz3BYZow&center=${latitude},${longitude}&zoom=15&maptype=roadmap`;
-        dispatch({ type: 'UPDATE_FIELD', payload: { field: 'mapurl', value: iframeUrl } });
-  
+
+        const iframeUrl = `https://www.google.com/maps/embed/v1/view?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&center=${latitude},${longitude}&zoom=15&maptype=roadmap`;
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "mapurl", value: iframeUrl },
+        });
       } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
+        console.error("Erro ao buscar CEP:", error);
       }
     }
   }
 
   function handleSubmit() {
     api.post("/contacts", state).then(() => {
-      alert("Contato criado com sucesso!");
+      toast.success("Contato criado com sucesso");
       window.location.reload();
     });
   }

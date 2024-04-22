@@ -3,6 +3,8 @@ import { InputText } from "@/components/InputText";
 import Styles from "./login.module.scss";
 import { useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from 'react-toastify';
+
 
 function register(username: string, password: string) {
   if (localStorage.getItem(username) !== null) {
@@ -42,18 +44,19 @@ export default function Login() {
 
   function handleLogin() {
     if (login(email, password)) {
+      toast.success('Login efetuado com sucesso!');
       router.push("/contacts");
     } else {
-      alert("Usuário não encontrado");
+      toast.error('Usário não encontrado');
     }
   }
 
   function handleRegister() {
     if (register(email, password)) {
       setIsLogin(true);
-      alert("Registro bem-sucedido");
+      toast.success("Registro bem-sucedido");
     } else {
-      alert("Usuário já registrado");
+      toast.warning("Usuário já registrado");
     }
   }
 

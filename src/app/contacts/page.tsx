@@ -5,10 +5,11 @@ import { FiMenu, FiPlus } from "react-icons/fi";
 import CreateItem from "@/components/ContactsList/CreateItem";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 function logout() {
   localStorage.removeItem("loggedInUser");
-
+  toast.success('Logout efetuado com sucesso!');
   window.location.href = "/login";
 }
 
@@ -17,7 +18,7 @@ function deleteAccount() {
   if (username !== null) {
     localStorage.removeItem(username);
     localStorage.removeItem("loggedInUser");
-
+    toast.success('Conta excluída com sucesso!');
     window.location.href = "/login";
   }
 }
@@ -25,8 +26,6 @@ function deleteAccount() {
 export default function Contacts() {
   const [isCreate, setIsCreate] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const loggedInUser = localStorage.getItem('loggedInUser');
-  const haveMap = localStorage.getItem('seeMap') === 'true';
   const [map, setMap] = useState('');
 
   return (

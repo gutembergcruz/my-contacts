@@ -34,8 +34,8 @@ export function InputText({ name, label, value, onChange, type }: InputProps) {
 
     return (
         <div className={Styles.container}>
-            <input name={name} required type={type === 'password' ? 'password' : 'text'} value={inputValue} onChange={handleChange}  />
-            <label htmlFor="">{label}</label>
+            <input name={name} id={label} required type={type === 'password' ? 'password' : 'text'} value={inputValue} onChange={handleChange}  />
+            <label htmlFor={label}>{label}</label>
             <button onClick={() => handleClear()}> <FiXCircle size={20} /> </button>
         </div>
     );
