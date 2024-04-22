@@ -5,7 +5,7 @@ import { useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
 
-
+// Função para registrar um novo usuário
 function register(username: string, password: string) {
   if (localStorage.getItem(username) !== null) {
     return false;
@@ -15,6 +15,7 @@ function register(username: string, password: string) {
   return true;
 }
 
+// Função para fazer login
 function login(username: string, password: string | null) {
   if (localStorage.getItem(username) === password) {
     localStorage.setItem("loggedInUser", username);
@@ -23,6 +24,7 @@ function login(username: string, password: string | null) {
   return false;
 }
 
+// Função reducer para manipular o estado
 function reducer(state: any, action: { type: any; field: any; value: any }) {
   switch (action.type) {
     case "SET_VALUE":
@@ -32,6 +34,7 @@ function reducer(state: any, action: { type: any; field: any; value: any }) {
   }
 }
 
+// Componente de login
 export default function Login() {
   const [state, dispatch] = useReducer(reducer, {
     email: "",
@@ -42,6 +45,7 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
 
+  // Função para lidar com o login
   function handleLogin() {
     if (login(email, password)) {
       toast.success('Login efetuado com sucesso!');
@@ -51,6 +55,7 @@ export default function Login() {
     }
   }
 
+  // Função para lidar com o registro
   function handleRegister() {
     if (register(email, password)) {
       setIsLogin(true);
@@ -60,6 +65,7 @@ export default function Login() {
     }
   }
 
+  // Função para manipular as mudanças nos campos de entrada
   function handleChange(field: string, value: string) {
     dispatch({ type: "SET_VALUE", field, value });
   }

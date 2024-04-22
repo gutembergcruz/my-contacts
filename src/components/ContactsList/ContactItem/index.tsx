@@ -4,13 +4,15 @@ import Styles from "./contactItem.module.scss";
 import { IoEllipsisHorizontalSharp } from "react-icons/io5";
 import api from "@/services/api";
 
+// Define a forma das propriedades do componente
 interface ContactItemProps {
-    name: string;
-    cpf: string;
-    id: number;
-    onDelete: (id: number) => void;
-    onViewMap: () => void;
+  name: string;
+  cpf: string;
+  id: number;
+  onDelete: (id: number) => void;
+  onViewMap: () => void;
 }
+
 export default function ContactItem({ name, cpf, id, onDelete, onViewMap }: ContactItemProps) {
   const [collapsed, setCollapsed] = useState(false);
 

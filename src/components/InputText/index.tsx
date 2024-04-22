@@ -3,6 +3,7 @@ import { FiXCircle } from 'react-icons/fi';
 import Styles from './InputText.module.scss'
 import { useEffect, useState } from 'react';
 
+// Define a forma das propriedades do componente
 interface InputProps {
     name?: string;
     label: string;
@@ -10,9 +11,12 @@ interface InputProps {
     type?: string;
     onChange?: (value: string) => void;
 }
+
+// Componente InputText
 export function InputText({ name, label, value, onChange, type }: InputProps) {
     const [inputValue, setInputValue] = useState(value || '');
 
+    // Função para lidar com a mudança de valor do input
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         setInputValue(newValue);
@@ -21,10 +25,12 @@ export function InputText({ name, label, value, onChange, type }: InputProps) {
         }
     };
 
+    // Atualiza o valor do input ao mudar a propriedade 'value'
     useEffect(() => {
         setInputValue(value || '');
     }, [value]);
 
+    // Função para limpar o input
     const handleClear = () => {
         setInputValue('');
         if (onChange) {

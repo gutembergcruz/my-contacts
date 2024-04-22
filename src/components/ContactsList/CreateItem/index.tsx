@@ -1,13 +1,16 @@
+// Importações necessárias
 import React, { useState, useReducer } from "react";
 import { InputText } from "@/components/InputText";
 import Styles from "./createItem.module.scss";
 import api from "@/services/api";
 import { toast } from "react-toastify";
 
+// Interface para definir a estrutura do estado inicial
 interface CreateItemProps {
   onRequestClose: () => void;
 }
 
+// Interface para definir a estrutura do estado do formulário
 interface State {
   nome: string;
   cpf: string;
@@ -18,11 +21,14 @@ interface State {
   cidade: string;
   complemento: string;
   owner: string;
-  mapurl: string;
+  latitude: string;
+  longitude: string;
 }
 
+// Tipo de ação para o reducer
 type Action = { type: string; payload: { field: string; value: string } };
 
+// Estado inicial do formulário
 const initialState: State = {
   nome: "",
   cpf: "",
@@ -33,9 +39,11 @@ const initialState: State = {
   cidade: "",
   complemento: "",
   owner: localStorage.getItem("loggedInUser") || "",
-  mapurl: "",
+  latitude: "",
+  longitude: "",
 };
 
+// Reducer para gerenciar as mudanças no estado do formulário
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "UPDATE_FIELD":
@@ -45,17 +53,22 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+// Componente principal
 export default function CreateItem({ onRequestClose }: CreateItemProps) {
+  // Uso do reducer para gerenciar o estado do formulário
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // Função para lidar com a mudança de valor nos campos do formulário
   function handleChange(field: string, value: string) {
     dispatch({ type: "UPDATE_FIELD", payload: { field, value } });
   }
 
+  // Função assíncrona para lidar com a mudança no CEP e obter informações do endereço
   async function handleCEPChange(value: string) {
     dispatch({ type: "UPDATE_FIELD", payload: { field: "cep", value } });
     if (value.length === 8) {
       try {
+        // Chamada à API ViaCEP para obter informações do endereço
         const response = await api.get(
           `https://viacep.com.br/ws/${value}/json/`
         );
@@ -77,23 +90,29 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
           payload: { field: "complemento", value: data.complemento || "" },
         });
 
+        // Chamada à API de Geocoding do Google Maps para obter a URL do mapa
         const geocodingResponse = await api.get(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-            `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`
-          )}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+            data.logradouro
+          )},${encodeURIComponent(data.bairro)},${encodeURIComponent(
+            data.localidade
+          )},${encodeURIComponent(data.uf)}&key=${
+            process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+          }`
         );
         const geocodingData = geocodingResponse.data;
         const location = geocodingData.results[0].geometry.location;
         const latitude = location.lat;
         const longitude = location.lng;
 
-        const iframeUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d0.3599.984896802188!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dcfbb566eef661%3A0x1c27fb2b25e207ab!2s${encodeURIComponent(
-          `${data.logradouro}, ${data.numero} - ${data.bairro}, ${data.cidade} - ${data.uf}, ${value}`
-        )}!5e0!3m2!1spt-BR!2sbr&zoom=15`;
-
+        // Atualização da URL do mapa no estado do formulário
         dispatch({
           type: "UPDATE_FIELD",
-          payload: { field: "mapurl", value: iframeUrl },
+          payload: { field: "latitude", value: latitude },
+        });
+        dispatch({
+          type: "UPDATE_FIELD",
+          payload: { field: "longitude", value: longitude },
         });
       } catch (error) {
         console.error("Erro ao buscar CEP:", error);
@@ -101,6 +120,7 @@ export default function CreateItem({ onRequestClose }: CreateItemProps) {
     }
   }
 
+  // Função para lidar com o envio do formulário
   function handleSubmit() {
     api.post("/contacts", state).then(() => {
       toast.success("Contato criado com sucesso");

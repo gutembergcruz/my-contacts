@@ -5,13 +5,17 @@ import { FiMenu, FiPlus } from "react-icons/fi";
 import CreateItem from "@/components/ContactsList/CreateItem";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
+
+// Função para fazer logout
 function logout() {
   localStorage.removeItem("loggedInUser");
   toast.success('Logout efetuado com sucesso!');
   window.location.href = "/login";
 }
 
+// Função para excluir a conta
 function deleteAccount() {
   const username = localStorage.getItem("loggedInUser");
   if (username !== null) {
@@ -25,7 +29,7 @@ function deleteAccount() {
 export default function Contacts() {
   const [isCreate, setIsCreate] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [map, setMap] = useState('');
+  const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
 
   return (
     <section className={Styles.container}>
@@ -37,7 +41,10 @@ export default function Contacts() {
             <FiPlus />
           </button>
         </div>
-        <ContactsList changeMap={(e: string) => setMap(e)} />
+        <ContactsList changeMap={(e: string) => {
+          const [lat, lng] = e.split(',');
+          setMarkerPosition({ lat: parseFloat(lat), lng: parseFloat(lng) });
+        }} />
       </aside>
       <main>
         <div className={Styles.profile}>
@@ -53,10 +60,15 @@ export default function Contacts() {
             )}
           </div>
         </div>
-        <iframe
-          className={Styles.iframeMap}
-          src={map}
-        ></iframe>
+        <LoadScript googleMapsApiKey={`${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}>
+          <GoogleMap
+            mapContainerStyle={{ width: '100%', height: '100vh' }}
+            center={{ lat: markerPosition.lat, lng: markerPosition.lng }}
+            zoom={15}
+          >
+            <Marker position={{ lat: markerPosition.lat, lng: markerPosition.lng }} />
+          </GoogleMap>
+        </LoadScript>
       </main>
     </section>
   );
